@@ -37,10 +37,14 @@ def predict(network,x):
 #t表示target (目标标签)
 x,t = get_data()
 network = init_network()
-accuracy_cnt = 0 #初始化测试概率值
+accuracy_cnt = 0 #初始化识别正确的数量
 for i in range(len(x)):
     y = predict(network,x[i]) #numpy数组形式输出各个标签的概率,索引位置与数字一一对应
-    p = np.argmax(y) #获取概率最高的元素的索引 argument
+    #获取概率最高的元素的索引 
+    # argument(数学中的自变量,就是对应这个函数的索引)
+        #因为数组本身就可以看作是一个函数f(i) = a[i]
+        # 这里表示使这个输入函数取最大值的自变量索引 索引就是对应数字值
+    p = np.argmax(y)
     if p == t[i]:
         accuracy_cnt += 1
 
