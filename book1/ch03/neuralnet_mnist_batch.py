@@ -36,9 +36,14 @@ batch_size = 100 #批数量
 accuracy_cnt = 0 #初始化正确数量
 
 for i in range(0,len(x),batch_size):
-    x_batch = x[i:i+batch_size] #是左开右闭吗,如何和for进行匹配
+    x_batch = x[i:i+batch_size] #索引提取是左闭右开
     y_batch = predict(network,x_batch)
+    #判断每一行,axis为二维数组的最内侧,列方向,每一行
     p = np.argmax(y_batch,axis = 1)
-    accuracy_cnt += np.sum(p == t[i:i+batch_size]) #sum是如何计算这一批的总数的?
+    #使用 == 判断p数组和索引出对应位置的数组对比生成布尔数组,然后sum求和True(当成1)后累加
+        #==本身是python中的比较运算符,作用在numpy数组会重载运算符实现逐元素比较返回布尔数组
+        #只要有一方是numpy数组直接重载运算符.python看到==时候会优先调用对象的特殊方法
+        #==本身是语法糖,==是调用对象的一个方法当有一方是numpy将会使用numpy数组的__eq__方法
+    accuracy_cnt += np.sum(p == t[i:i+batch_size])
 
 print('Accuracy:' + str(float(accuracy_cnt)/len(x)))
