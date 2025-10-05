@@ -20,18 +20,19 @@ def _numerical_gradient_no_batch(f,x):
     return grad
 
 def numerical_gradient(f,X):
+    #当为一个点的时候
     if X.ndim == 1:
         return _numerical_gradient_no_batch(f,X)
     
     else:
         grad = np.zeros_like(X)
 
-        for idx,x in enumerate(X): #
+        #enumerate返回下标+元素  是返回最外层的索引和元素
+        for idx,x in enumerate(X): 
             grad[idx] = _numerical_gradient_no_batch(f,x)
 
         return grad
 
-#
 def function_2(x):
     if x.ndim == 1:
         return np.sum(x**2)
@@ -44,7 +45,7 @@ def tangent_line(f,x):
     y = f(x) - d*x #一次函数平移量
     return lambda t: d*t + y
 
-if __name__ == '__main__':
+if __name__ == '__main__': #
     x0 = np.arange(-2,2.5,0.25)
     x1 = np.arange(-2,2.5,0.25)
     X,Y = np.meshgrid(x0,x1)
@@ -52,7 +53,7 @@ if __name__ == '__main__':
     X = X.flatten()
     Y = Y.flatten()
 
-    grad = numerical_gradient(function_2,np.array([X,Y]))#
+    grad = numerical_gradient(function_2,np.array([X,Y]))
 
     plt.figure()
     plt.quiver(X,Y,-grad[0],-grad[1],angles = 'xy',color = '#666666')
@@ -61,7 +62,6 @@ if __name__ == '__main__':
     plt.xlabel('x0')
     plt.ylabel('x1')
     plt.grid()
-    plt.legend()#
-    plt.draw()#
+    plt.legend()#显示图例
+    plt.draw()#手动重绘
     plt.show()
-
