@@ -24,7 +24,9 @@ t = np.array([0,0,1])
 
 net = simpleNet()
 
+#这是一个假的函数
 f = lambda w: net.loss(x,t)
+#这是为了演示,真的函数已经写在了下面的编程函数中
 dW = numerical_gradient(f,net.W)
 
 print(dW)
