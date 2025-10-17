@@ -32,3 +32,32 @@ def numerical_gradient_2d(f,X):
             grad[idx] = _numerical_gradient_1d(f,x)
 
         return grad
+    
+def numerical_gradient(f,x):
+    h = 1e-4
+    grad = np.zeros_like(x)
+
+    #一个多维数组迭代器,依次访问数组中每个元素 返回一个nditer迭代器对象
+    #flags指的是将多维下标(对应索引)存在字符串名称中  op_flags表示允许迭代过程中修改值(默认是只读)
+    #参数赋值的[]是配置项,不是属性赋值  为[]是因为参数可以接收很多个选项名
+    it = np.nditer(x,flags = ['multi_index'],op_flags=['readwrite'])
+    #直到遍历完之前一直循环
+    while not it.finished:
+        #得到当前元素多维索引,返回索引元组
+            #numpy支持用元组用多维索引 [()]索引等价于[]索引
+        idx = it.multi_index
+        #提取处理元素
+        tmp_val = x[idx]
+        x[idx] = float(tmp_val) + h
+        fxh1 = f(x)
+
+        x[idx] = tmp_val - h
+        fxh2 = f(x)
+        grad[idx] = (fxh1 - fxh2) / (2*h)
+
+        x[idx] = tmp_val
+        #移动到下一个元素
+        it.iternext()
+
+    return grad
+
