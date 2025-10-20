@@ -5,6 +5,7 @@ from common.gradient import numerical_gradient
 
 class TwoLayerNet:
     #初始化,参数除了self依次表示为输入层神经元数,隐藏层神经元数,输出层神经元数,权重初始化标准差
+    #初始化就是生成时被调用的方法
     def __init__(self,input_size,hidden_size,output_size,weight_init_std = 0.01):
         #初始化权重
         self.params = {}
@@ -38,7 +39,7 @@ class TwoLayerNet:
         y = self.predict(x)
         y = np.argmax(y,axis = 1) #返回最大索引位置,axis = 1表示在每一行中搜寻返回一个数组
         t = np.argmax(t,axis = 1)
-        accuracy = np.sum(y == t) / float(x.shape[0])
+        accuracy = np.sum(y == t) / float(x.shape[0]) #y==t是numpy数组的比较广播(前提是y和t形状相同)
         return accuracy
     
     #计算权重参数梯度
@@ -48,7 +49,10 @@ class TwoLayerNet:
         #保存梯度的字典型变量
         grads = {}
         #第一层权重的梯度
-        grads['W1'] = numerical_gradient(loss_W,self.params['W1'])#
+        #这里调用的函数不是这里def定义的函数自循环
+            #调用的是之前from那里导入的函数
+            #如果自循环是self.numerical_gradient才是(类需要self才能调用自身)
+        grads['W1'] = numerical_gradient(loss_W,self.params['W1'])#基于数值微分法计算梯度
         #第一层偏置的梯度
         grads['b1'] = numerical_gradient(loss_W,self.params['b1'])
         grads['W2'] = numerical_gradient(loss_W,self.params['W2'])
@@ -56,7 +60,7 @@ class TwoLayerNet:
 
         return grads
 
-    #计算权重参数梯度(高速版)
+    #计算权重参数梯度(高速版)(节约时间)
     def gradient(self,x,t):
         W1,W2 = self.params['W1'],self.params['W2']
         b1,b2 = self.params['b1'],self.params['b2']
