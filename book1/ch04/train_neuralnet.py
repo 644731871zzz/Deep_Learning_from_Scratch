@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #第二个参数表示将标签转位独特向量 如2>>>[0,0,1,0,0,0] 就是对应索引位置标记为1
 (x_train,t_train),(x_test,t_test) = load_mnist(normalize = True,one_hot_label = True)
 
-train_loss_list = []
+network = TwoLayerNet(input_size = 784,hidden_size = 50,output_size = 10)
 
 #超参数
 iters_num = 10000 #迭代器次数
@@ -18,7 +18,16 @@ train_size = x_train.shape[0]
 batch_size = 100
 learning_rate = 0.1 #学习的更新幅度
 
-network = TwoLayerNet(input_size = 784,hidden_size = 50,output_size = 10)
+print(train_size)
+
+train_loss_list = []
+train_acc_list = []
+test_acc_list = []
+
+#平均每个epoch的重复次数
+#max返回两者值中的较大值,保证结果至少为1
+iter_per_epoch = max(train_size / batch_size,1)
+
 
 for i in range(iters_num):
     #获取mini_batch
@@ -34,8 +43,8 @@ for i in range(iters_num):
     t_batch = t_train[batch_mask]
 
     #计算梯度
-    grad = network.numerical_gradient(x_batch,t_batch)
-    #grad = network.gradient(x_batch,t_batch)#高速版
+    #grad = network.numerical_gradient(x_batch,t_batch)
+    grad = network.gradient(x_batch,t_batch)#高速版
 
     for key in ('W1','b1','W2','b2'):
         network.params[key] -= learning_rate * grad[key]
@@ -46,9 +55,24 @@ for i in range(iters_num):
     #记录每一次的损失函数
     train_loss_list.append(loss)
 
+    #计算每个epoch的识别精度
+    if i % iter_per_epoch == 0:
+        train_acc = network.accuracy(x_train,t_train)
+        test_acc = network.accuracy(x_test,t_test)
+        train_acc_list.append(train_acc)
+        test_acc_list.append(test_acc)
+        #str将其变成字符串后然后拼接输出
+        print('train acc, test acc | ' + str(train_acc) + ',' + str(test_acc))
+
 
 #绘制图像
-plt.plot(train_loss_list)
-plt.xlim(0,10000)
-plt.ylim(0,10)
+markers = {'train':'o','test':'s'}
+x = np.arange(len(train_acc_list))
+plt.plot(x,train_acc_list,label = 'train acc')
+plt.plot(x,test_acc_list,label = 'test acc',linestyle = '--')
+plt.xlabel('epochs')
+plt.ylabel('accuracy') #识别精度标题
+plt.ylim(0,1.0)
+#显示图例 loc配置图例位置
+plt.legend(loc = 'lower right')
 plt.show()
