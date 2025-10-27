@@ -50,3 +50,25 @@ class Affine:
         self.db = np.sum(dout,axis = 0)
 
         return dx
+    
+
+class SoftmaxWithLoss:
+    def __init__(self):
+        self.loss = None #损失
+        self.y = None #softmax输出
+        self.t = None #监督数据(one - hot vector)
+
+    def forward(self,x,t):
+        self.t = t
+        self.y = softmax(x)
+        self.loss = cross_entropy_error(self.y,self.t)
+
+        return self.loss
+    
+    def backward(self,dout = 1):
+        batch_size = self.t.shape[0]
+        #因为是一簇数据,一簇训练数据的损失函数的输出还要进行相加平均
+        #反向传播就把求平均传递回来了
+        dx = (self.y - self.t) / batch_size
+
+        return dx
