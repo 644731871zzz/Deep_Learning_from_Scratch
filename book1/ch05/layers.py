@@ -38,7 +38,7 @@ class Affine:
         self.dW = None
         self.db = None
 
-    def forwarid(self,x):
+    def forward(self,x):
         self.x = x
         out = np.dot(x + self.W) + self.b
 
