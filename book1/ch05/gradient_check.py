@@ -1,5 +1,17 @@
-import sys,os
-sys.path.append(os.pardir)
+import sys, os
+
+# 获取当前脚本的绝对路径
+current_script_path = os.path.abspath(__file__)
+# 获取当前脚本所在目录
+current_dir = os.path.dirname(current_script_path)
+
+# 将 "book1" 目录（您的项目根目录）添加到 sys.path
+# 假设您的文件结构是 .../book1/ch05/gradient_check.py
+# 那么父目录的父目录就是 book1
+parent_dir = os.path.dirname(current_dir)
+
+# 将 book1 目录添加到 sys.path
+sys.path.append(parent_dir)
 import numpy as np
 from dataset.mnist import load_mnist
 from two_layer_net import TwoLayerNet
