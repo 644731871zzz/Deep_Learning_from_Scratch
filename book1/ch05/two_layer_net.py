@@ -28,7 +28,7 @@ class TwoLayerNet:
 
     def predict(self,x):
         #.values()为取值不取键,无参数取所有值,按照顺序字典的顺序返回
-        for layer in self.layers.values(): #
+        for layer in self.layers.values():
             x = layer.forward(x)
 
         return x
