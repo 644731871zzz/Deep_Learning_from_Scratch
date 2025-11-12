@@ -21,16 +21,16 @@ for i in range(hidden_layer_size):
     if i != 0:
         x = activations[i-1]
 
-    #w = np.random.randn(node_num,node_num) *1
-    w = np.random.randn(node_num,node_num) *0.01
+    w = np.random.randn(node_num,node_num) / np.sqrt(node_num)
+    #w = np.random.randn(node_num,node_num) *0.01
     #w = np.random.randn(node_num,node_num) * np.sqrt(1.0 / node_num)
     #w = np.random.randn(node_num,node_num) * np.sqrt(2.0 / node_num)
 
     a = np.dot(x,w)
 
-    z = sigmoid(a)
+    #z = sigmoid(a)
     #z = ReLU(a)
-    #z = tanh(a)
+    z = tanh(a)
 
     #key可以是任何哈西对象(整数,字符串,元组),不会自动转换为字符串
     #能通过哈希找到的固定数值的对象-只要对象内容不可变就可以作为字典
