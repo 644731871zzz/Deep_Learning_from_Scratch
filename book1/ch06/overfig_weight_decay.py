@@ -13,7 +13,7 @@ from common.optimizer import SGD
 x_train = x_train[:300]
 t_train = t_train[:300]
 
-weight_decay_lambda = 0.1#权值衰减,惩罚过大的权重
+#weight_decay_lambda = 0.1#权值衰减,惩罚过大的权重
 
 network = MultiLayerNet(input_size = 784,hidden_size_list = [100,100,100,100,100,100],
                         output_size=10,weight_decay_lambda=weight_decay_lambda)
