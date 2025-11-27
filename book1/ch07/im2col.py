@@ -28,13 +28,19 @@ def im2col(input_data,filter_h,filter_w,stride = 1,pad = 0):
     #(pad,pad)表示填充pad个数量
     img = np.pad(input_data,[(0,0),(0,0),(pad,pad),(pad,pad)],'constant')
     #初始化4d操作后的输出值,这是个暂存窗口,是仓库的作用
-    col = np.zeros((N,C,filter_h,filter_w,out_h,out_w))
+    col = np.zeros((N,C,filter_h,filter_w,out_h,out_w))#
 
+    #
     for y in range(filter_h):
-        y_max = y + stride*out_h#
+        #当前滤波器大小的这个位置的y最大能够索引到相应的哪一行
+        y_max = y + stride*out_h
         for x in range(filter_w):
+            #当前滤波器大小的这个位置的x最大能够索引到相应的哪一列
             x_max = x + stride*out_w
+            #左边xy就是滤波器2d面(不是深度)的位置
+            #固定了xy就自动匹配填充位置,刚好匹配
             col[:,:,y,x,:,:] = img[:,:,y:y_max:stride,x:x_max:stride]
 
+    #
     col = col.transpose(0,4,5,1,2,3).reshape(N*out_h*out_w,-1)
     return col
