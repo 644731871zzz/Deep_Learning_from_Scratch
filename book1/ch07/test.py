@@ -63,3 +63,55 @@ class Convolution:
         dx = col2im(dcol,self.x.shape,FH,FW,self.stride,self.pad)
 
         return dx
+    
+#池化层
+class Pooling:
+    def __init__(self,pool_h,pool_w,stride = 1,pad = 0):
+        self.pool_h = pool_h
+        self.pool_w = pool_w
+        self.stride = stride
+        self.pad = pad
+
+        self.x = None
+        self.arg_max = None
+
+    def forward(self,x):
+        N,C,H,W = x.shape
+        out_h = int(1+(H - self.pool_h) / self.stride)
+        out_w = int(1+(W - self.pool_w) / self.stride)
+
+        #展开
+        col = im2col(x,self.pool_h,self.pool_w,self.stride,self.pad)
+        #针对输出形状做变换使其从适配滤波器的形状变换为适配适配MAX池化
+        col = col.reshape(-1,self.pool_h*self.pool_w)
+
+        #最大值所在索引
+        arg_max = np.argmax(col,axis = 1)
+        #最大值
+        out = np.max(col,axis = 1)
+        #转换
+        #因为求出来的连起来的一个个元素最里面是深度,所以先排列深度C.后面在重新调整轴方向
+        out = out.reshape(N,out_h,out_w,C).transpose(0,3,1,2)
+
+        self.x = x
+        self.arg_max = arg_max
+
+        return out
+    
+    def backward(self,dout):
+        dout = dout.transpose(0,2,3,1)
+
+        pool_size = self.pool_h * self.pool_w
+        dmax = np.zeros((dout.size,pool_size))
+        #这里每一行是单通道的池化窗口
+        dmax[np.arange(self.arg_max.size),self.arg_max.flatten()] = dout.flatten()
+        #这里是元组拼接,表示在shape基础上添加一个维度
+        #重新配置成(N, out_h, out_w, C, pool_size)
+        dmax = dmax.shape(dout.shape + (pool_size,))
+
+        #再配置成col2im能够接受的形状
+        #不直接配置是为了减少for循环,这样更快
+        dcol = dmax.reshape(dmax.shape[0] * dmax.shape[1] * dmax.shape[2] - 1)
+        dx = col2im(dcol,self.x.shape,self.pool_h,self.pool_w,self.stride,self.pad)
+
+        return dx
