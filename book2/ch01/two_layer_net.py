@@ -37,11 +37,11 @@ class TwoLayerNet:
     
     def forward(self,x,t):
         score = self.predict(x)
-        loss = self.losslayer.forward(score,t)
+        loss = self.loss_layer.forward(score,t)
         return loss
     
     def backward(self,dout = 1):
-        dout = self.loss_layer.backward
+        dout = self.loss_layer.backward()
         #reversed将迭代对象迭代顺序改为反向
             #部分迭代对象可用,一般的内置序列类型全部可用,包括了元组,列表,字符串,range()
         for layer in reversed(self.layers):
