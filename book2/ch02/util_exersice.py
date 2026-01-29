@@ -62,3 +62,30 @@ def cos_similarity(x,y,eps = 1e-8):
     ny = y / (np.sqrt(np.sum(y**2)) + eps)
 
     return np.dot(nx,ny)
+
+
+def most_similar(query,word_to_id,id_to_word,word_matrix,top = 5):
+    """相似单词查找"""
+
+    if query not in word_to_id:
+        print('%s is not found' % query)
+        return#结束函数立即返回 空return(当前)和没写都表示返回None
+    
+    print('\n[query] ' + query)
+    query_id = word_to_id[query]
+    query_vec = word_matrix[query_id]
+
+    vocab_size = len(id_to_word)
+    similarity = np.zeros(vocab_size)
+    for i in range(vocab_size):
+        similarity[i] = cos_similarity(word_matrix[i],query_vec)
+
+    count = 0
+    for i in (-1*similarity).argsort():#先求反,然后用升序返回索引列表(非惰性)   numpy没有内置降序取反求升序是默认做法
+        if id_to_word[i] == query:
+            continue#跳过当前这次循环,进入下次for继续执行(后面的语句不会执行)
+        print(' %s: %s'% (id_to_word[i],similarity[i]))
+
+        count +=1#累加只用 += 没有c的歧义
+        if count >= top:
+            return
