@@ -89,3 +89,7 @@ def most_similar(query,word_to_id,id_to_word,word_matrix,top = 5):
         count +=1#累加只用 += 没有c的歧义
         if count >= top:
             return
+        
+
+def ppmi(C,verbose = False,eps = 1e-8):
+    M = np.zeros_like(C,dtype = np.float32)
