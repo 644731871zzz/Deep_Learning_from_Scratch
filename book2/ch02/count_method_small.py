@@ -22,7 +22,7 @@ print(C[0])
 print(W[0])
 print(U[0])
 
-# for word,word_id in word_to_id.items():
-#     plt.annotate(word,(U[word_id,0],U[word_id,1]))#
-# plt.scatter(U[:,0],U[:,1],alpha = 0.5)#
-# plt.show
+for word,word_id in word_to_id.items():
+    plt.annotate(word,(U[word_id,0],U[word_id,1]))#
+plt.scatter(U[:,0],U[:,1],alpha = 0.5)#
+plt.show

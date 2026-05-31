@@ -23,6 +23,7 @@ np.set_printoptions(precision=3)  # 有效位数为3位
 print(C[0])
 print(W[0])
 print(U[0])
+print(S)
 
 # plot
 for word, word_id in word_to_id.items():
