@@ -8,14 +8,15 @@ from common.np import *
 
 
 def create_contexts_target(corpus,window_size = 1):
-    target = corpus[window_size: - window_size] #切片不包含终点,到-window_size之前一个结束,想取到最后一个直接[a:]不是[a:-1]
+    #切片不包含终点,到-window_size之前一个结束,想取到最后一个直接[a:]不是[a:-1]
+    target = corpus[window_size: - window_size] 
     contexts = []
 
-    for idx in range(window_size,len(corpus) - window_size):
+    for idx in range(window_size,len(corpus) - window_size): #为什么不是+1再减一
         cs = []
         for t in range(-window_size,window_size + 1):
             if t == 0:
-                continue #
+                continue #跳过当前循环进入下一次循环
             cs.append(corpus[idx + t])
         contexts.append(cs) #
 
