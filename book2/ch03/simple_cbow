@@ -1,0 +1,30 @@
+import os,sys
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from common.layers import MatMul,SoftmaxWithLoss
+
+import numpy as np
+
+
+class SimpleCBOW:
+    #vocab_size表示词汇总数
+    def __init__(self,vocab_size,hidden_size):
+        V,H = vocab_size,hidden_size
+        
+        W_in = 0.01*np.random.randn(V,H).astype('f')
+        W_out = 0.01*np.random.randn(H,V).astype('f')
+
+        self.in_layer0 = MatMul(W_in)
+        self.in_layer1 = MatMul(W_in)
+        self.out_layer = MatMul(W_out)
+        self.loss_layer = SoftmaxWithLoss()
+
+        #整理所有的权重梯度
+        layers = [self.in_layer0,self.in_layer1,self.out_layer]
+        self.params,self.grds = [],[]
+        for layer in layers:
+            self.params += layer.params
+            self.grads += layer.grads
