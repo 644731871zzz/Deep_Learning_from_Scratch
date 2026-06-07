@@ -14,7 +14,7 @@ class SimpleCBOW:
     def __init__(self,vocab_size,hidden_size):
         V,H = vocab_size,hidden_size
         
-        W_in = 0.01*np.random.randn(V,H).astype('f')
+        W_in = 0.01*np.random.randn(V,H).astype('f') #32为浮点数
         W_out = 0.01*np.random.randn(H,V).astype('f')
 
         self.in_layer0 = MatMul(W_in)
@@ -24,7 +24,14 @@ class SimpleCBOW:
 
         #整理所有的权重梯度
         layers = [self.in_layer0,self.in_layer1,self.out_layer]
-        self.params,self.grds = [],[]
+        #梯度已经在初始化时候就确定了位置,反向传播才有真的梯度
+        self.params,self.grads = [],[]
         for layer in layers:
+            #+=用在python数列是当前维度的向后拼接,python没有维度,所以只看这一层装了什么
+                #元组也可以,但是不能修改元组,其实是得到了新的元组
+                #numpy数组用+=变成了当前维度形状下对应位置的的加法
+                #.shape看的是内部的,所以忽略了numpy的'壳'
             self.params += layer.params
             self.grads += layer.grads
+
+        self.word_vecs = W_in
