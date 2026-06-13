@@ -94,6 +94,8 @@ class NegativeSamplingLoss:
 
         self.params,self.grads = [],[]
         for layer in self.embed_dot_layers:
+            #这里最后定位到的是cbow里面创建的最原始的W_in
+            #numpy只要出现+= -=这种类似的语法,一定会修改原始定位到的数据
             self.params += layer.params
             self.grads += layer.grads
 
