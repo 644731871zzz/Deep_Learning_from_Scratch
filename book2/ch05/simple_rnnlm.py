@@ -30,7 +30,7 @@ class SimpleRnnlm:
         self.params,self.grads = [],[]
 
         for layer in self.layers:
-            self.params += layer.params #python列表中+=等价于expend 不是array的广播加法
+            self.params += layer.params #python列表中+=等价于extend 不是array的广播加法
             self.grads += layer.grads
 
     def forward(self,xs,ts):
@@ -41,3 +41,9 @@ class SimpleRnnlm:
     
     def backward(self,dout = 1):
         dout = self.loss_layer.backward(dout)
+        for layer in reversed(self.layers): #reversed是列表反向遍历
+            dout = layer.backward(dout)
+        return dout
+    
+    def reset_state(self):
+        self.rnn_layer.reset_state() #重设h
