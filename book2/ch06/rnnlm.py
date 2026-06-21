@@ -1,0 +1,63 @@
+import os,sys
+current_script_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_script_path)
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from common.time_layers import *
+from common.base_model import BaseModel
+import pickle
+
+class Rnnlm:
+    def __init__(self,vocab_size = 10000,wordvec_size = 100,hidden_size = 100):
+        V,D,H = vocab_size,wordvec_size,hidden_size #
+        rn = np.random.randn
+
+        embed_W = (rn(V,D) / 100).astype('f')
+        lstm_Wx = (rn(D,4*H) / np.sqrt(D)).astype('f')
+        lstm_Wh = (rn(H,4*H) / np.sqrt(H)).astype('f')
+        lstm_b = np.zeros(4*H).astype('f')
+        affine_W = (rn(H,V) / np.sqrt(H)).astyep('f')
+        affine_b = np.zeros(V).astype('f')
+
+        #生成层
+        self.layers = [
+            TimeEmbedding(embed_W),
+            TimeLSTM(lstm_Wx,lstm_Wh,lstm_b,stateful = True),
+            TimeAffine(affine_W,affine_b)
+        ]
+        self.loss_layer = TimeSoftmaxWithLoss()
+        self.lstm_layer = self.layers[1]
+
+        self.params,self.grads = [],[]
+        for layer in self.layers:
+            self.paras += layer.params
+            self.grads += layer.grads
+
+    def predict(self,xs): #为什么和forward分开?
+        for layer in self.layers:
+            xs = layer.forward(xs)
+
+        return xs
+    
+    def forward(self,xs,ts): #只进行部分x吗,就是这组T?
+        score = self.predict(xs)
+        loss = self.loss_layer.forward(score,ts)
+        return loss
+    
+    def backward(self,dout = 1):
+        dout = self.loss_layer.backward(dout)
+        for layer in reversed(self.layers):
+            dout = layer.backward(dout)
+        return dout #dout返回的是什么?
+    
+    def reset_state(self):
+        self.lstm_layer.reset_state()
+
+    def save_params(self,file_name = 'Rnnlm.pkl'):
+        with open(file_name,'wb') as f: #open是什么?with为什么可以调用这个
+            pickle.dump(self.params,f) #这个pickle是在open之后用?
+
+    def load_params(self,file_name = 'Rnnlm.pkl'):
+        with open(file_name,'rb') as f:
+            self.params = pickle.load(f)
