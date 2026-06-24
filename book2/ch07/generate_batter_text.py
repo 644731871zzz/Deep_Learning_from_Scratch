@@ -30,7 +30,8 @@ print(txt)
 model.reset_state()
 
 start_words = 'the meaning of life is'
-start_ids = [word_to_id[w] for w in start_words.split(' ')] #
+#.split将字符串按照'字符'分割,返回列表
+start_ids = [word_to_id[w] for w in start_words.split(' ')] 
 
 for x in start_ids[:-1]:
     x = np.array(x).reshape(1,1)
