@@ -98,7 +98,7 @@ class TimeLSTM:
 
         for t in range(T): #T是这次输入的时间长度
             layer = LSTM(*self.params)
-            self.h,self.c = layer.forward(xs[:,t,:],self.h,self.c) #
+            self.h,self.c = layer.forward(xs[:,t,:],self.h,self.c)
             hs[:,t,:] = self.h
 
             self.layers.append(layer)
