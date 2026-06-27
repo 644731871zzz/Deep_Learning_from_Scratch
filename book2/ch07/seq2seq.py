@@ -110,7 +110,8 @@ class Seq2seq(BaseModel):
         self.params = self.encoder.params + self.decoder.params
         self.grads = self.encoder.grads + self.decoder.grads
 
-    def forward(self,xs,ts): #ts是不是已经被切割过的?
+    def forward(self,xs,ts): #输入时候xs和ts需要是分开好的
+        #的decoder_xs和decoder_ts都是decoder的输入和输出对比,和encoder输入无关
         decoder_xs,decoder_ts = ts[:,:-1],ts[:,1:]
 
         h = self.encoder.forward(xs)
